@@ -56,10 +56,10 @@ def submit():
             song = {'name': file.filename, 'Path': PATH, 'tags': tags}
             ins = insert(song)
             if ins == True:
-                return redirect(url_for('/'))
+                return redirect(url_for('home'))
             else:
-                print("error")
-                return render_template('data.html',msg="Error Occured!")
+                print ins
+                return render_template('data.html',msg=ins)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=3000)

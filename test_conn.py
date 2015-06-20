@@ -9,19 +9,17 @@ def getcon():
 
 
 def getid(con):
-    results = con.retrieve_last(docs=1)
+    results = con.retrieve_last(docs=0)
     try:
         last = results.get_documents()
-        return int([ide for ide in last][0])
+        return max([int(ide) for ide in last])
     except:
         return 0
 
 def insert(data):
     try:
         con = getcon()
-        print con
         ide = getid(con)+1
-        print ide
         con.insert({ide: data})
     except pycps.APIError as e:
         return e
