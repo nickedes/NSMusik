@@ -51,11 +51,15 @@ def submit():
             for val in result:
                 if val['normalized_text'] not in tags:
                     tags.append(val['normalized_text'])
+            tags = json.dumps(tags)
             print(tags)
-            song = {'name':file.filename, 'Path':PATH,'tags':tags}
-            ins = insert(song) 
-            if ins == True:               
-                return 
+            song = {'name': file.filename, 'Path': PATH, 'tags': tags}
+            ins = insert(song)
+            if ins == True:
+                return redirect(url_for('/'))
+            else:
+                print("error")
+                return render_template('data.html',msg="Error Occured!")
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=3000)
