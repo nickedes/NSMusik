@@ -7,9 +7,8 @@ from flask import (
     redirect,
     request
 )
-import urllib.request
+from test_conn import insert
 import requests
-import urllib.parse
 import json
 from werkzeug import secure_filename
 
@@ -52,7 +51,11 @@ def submit():
             for val in result:
                 if val['normalized_text'] not in tags:
                     tags.append(val['normalized_text'])
-            'normalized_text'return render_template('data.html', song=file.filename, data=tags)
+            print(tags)
+            song = {'name':file.filename, 'Path':PATH,'tags':tags}
+            ins = insert(song) 
+            if ins == True:               
+                return 
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=3000)
