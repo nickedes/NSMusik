@@ -1,11 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<body>
+{% include 'header.html' %}
 	<form action="/submit" method="POST" enctype="multipart/form-data">
-		Upload song<input type="file" name="file1">
-		<br><br>
-		Upload lyrics<input type="file" name="file2">
-		<br><br>
-		<button type="submit">Submit</button>
+	<div class="input-group">
+			Upload song
+			<input type="file" name="file1">
+			<br>
+	</div>
+	<div class="input-group">
+			Upload lyrics
+			<input type="file" name="file2">
+			<br>
+	</div>
+	<div align="center">
+		<button type="submit" class="btn btn-custom btn-info">Submit</button>
+	</div>
 	</form>
 </body>
+{% include 'footer.html' %}

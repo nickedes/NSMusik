@@ -1,8 +1,9 @@
+{% include 'header.html' %}
 {% if data != "hey" %}
+<div class="col-lg-12">
 <table class="table">
 	<thead>
 		<tr>
-			<th>Id</th>
 			<th>Name</th>
 			<th>Tags</th>
 		</tr>
@@ -10,7 +11,6 @@
 	<tbody>
 		{% for value in data %}
 			<tr>
-				<td>{{ data[value]['id'] }}</td>
 				<td>
 				<a href="file://{{ data[value]['Path'] }}">
 				{{ data[value]['name'] }}
@@ -28,6 +28,9 @@
 {% else %}
 <p>{{data}}</p>
 {% endif %}
+<div align="center">
 <form action="/submit">
-	<button>Add</button>
+	<button type="submit" class="btn btn-custom btn-primary">Add</button>
 </form>
+</div>
+{% include 'footer.html' %}

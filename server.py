@@ -20,7 +20,9 @@ from werkzeug import secure_filename
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
-keywords = ['stormy','drunk','lonely','tired','sorry','lost','respect','love','fuck','depressed','jealous']
+keywords = ['stormy', 'drunk', 'lonely', 'tired', 'sorry', 'lost',
+            'respect', 'love', 'depressed', 'jealous', 'mesmerize']
+
 
 def allowed_file(filename, ALLOWED_EXTENSIONS):
     return '.' in filename and \
@@ -30,15 +32,15 @@ def allowed_file(filename, ALLOWED_EXTENSIONS):
 @app.route('/')
 def home():
     # Fetch all songs in db.
-    data=view()
+    data = view()
     if data != "hey":
         for value in data:
             data[value]['tags'] = json.loads(data[value]['tags'])
-    return render_template('songs.html',data=data)
+    return render_template('songs.html', data=data)
 
 
 def getWords(text):
-    return re.compile('\w+').findall(text)  
+    return re.compile('\w+').findall(text)
 
 
 @app.route('/submit', methods=['GET', 'POST'])
@@ -72,7 +74,7 @@ def submit():
                         else:
                             tags[x] += 1
             print(tags)
-            sorted_tags = sorted(tags.items(),key=operator.itemgetter(0))
+            sorted_tags = sorted(tags.items(), key=operator.itemgetter(0))
             if len(sorted_tags) > 5:
                 sorted_tags = sorted_tags[0:5]
 
@@ -91,9 +93,10 @@ def submit():
                     return redirect(url_for('home'))
                 else:
                     print ins
-                    return render_template('data.html',msg=ins)
+                    return render_template('data.html', msg=ins)
             else:
-                return render_template('data.html',msg="error")
+                return render_template('data.html', msg="error")
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=3000)
+    PORT = int(os.getenv('VCAP_APP_PORT', 8000))
+    app.run(debug=True, host='0.0.0.0', port=PORT)
