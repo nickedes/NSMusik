@@ -1,3 +1,4 @@
+import operator
 import os
 from flask import (
     Flask,
@@ -7,7 +8,11 @@ from flask import (
     redirect,
     request
 )
-from test_conn import insert
+import re
+from test_conn import (
+    insert,
+    view
+)
 import requests
 import json
 from werkzeug import secure_filename
@@ -15,6 +20,7 @@ from werkzeug import secure_filename
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
+keywords = ['stormy','drunk','lonely','tired','sorry','lost','respect','love','fuck','depressed','jealous']
 
 def allowed_file(filename, ALLOWED_EXTENSIONS):
     return '.' in filename and \
@@ -24,7 +30,15 @@ def allowed_file(filename, ALLOWED_EXTENSIONS):
 @app.route('/')
 def home():
     # Fetch all songs in db.
-    return "<p>hey</p>"
+    data=view()
+    if data != "hey":
+        for value in data:
+            data[value]['tags'] = json.loads(data[value]['tags'])
+    return render_template('songs.html',data=data)
+
+
+def getWords(text):
+    return re.compile('\w+').findall(text)  
 
 
 @app.route('/submit', methods=['GET', 'POST'])
@@ -32,7 +46,7 @@ def submit():
     if request.method == 'GET':
         return render_template('upload.html')
     else:
-        file = request.files['file']
+        file = request.files['file2']
         UPLOAD_FOLDER = '/home/nickedes/'
         ALLOWED_EXTENSIONS = set(['txt'])
         app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -47,19 +61,39 @@ def submit():
                 url=url, data={'apikey': my_api_key}, files={'file': f})
             data = r.json()
             result = data[data['aggregate']['sentiment']]
-            tags = []
+            tags = {}
             for val in result:
                 if val['normalized_text'] not in tags:
-                    tags.append(val['normalized_text'])
-            tags = json.dumps(tags)
+                    list_tags = getWords(val['normalized_text'])
+                    for x in list_tags:
+                        if x not in tags:
+                            if x in keywords:
+                                tags[x] = 1
+                        else:
+                            tags[x] += 1
             print(tags)
-            song = {'name': file.filename, 'Path': PATH, 'tags': tags}
-            ins = insert(song)
-            if ins == True:
-                return redirect(url_for('home'))
+            sorted_tags = sorted(tags.items(),key=operator.itemgetter(0))
+            if len(sorted_tags) > 5:
+                sorted_tags = sorted_tags[0:5]
+
+            if sorted_tags.reverse():
+                sorted_tags = sorted_tags.reverse()
+            tags = json.dumps(sorted_tags)
+            file = request.files['file1']
+            ALLOWED_EXTENSIONS = set(['mp3'])
+            if file and allowed_file(file.filename, ALLOWED_EXTENSIONS):
+                filename = secure_filename(file.filename)
+                PATH = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(PATH)
+                song = {'name': file.filename, 'Path': PATH, 'tags': tags}
+                ins = insert(song)
+                if ins == True:
+                    return redirect(url_for('home'))
+                else:
+                    print ins
+                    return render_template('data.html',msg=ins)
             else:
-                print ins
-                return render_template('data.html',msg=ins)
+                return render_template('data.html',msg="error")
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=3000)

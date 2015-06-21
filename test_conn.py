@@ -16,6 +16,7 @@ def getid(con):
     except:
         return 0
 
+
 def insert(data):
     try:
         con = getcon()
@@ -24,3 +25,13 @@ def insert(data):
     except pycps.APIError as e:
         return e
     return True
+
+
+def view():
+    try:
+        con = getcon()
+        results = con.retrieve_last(docs=0)
+        last = results.get_documents()
+        return last
+    except:
+        return "hey"

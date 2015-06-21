@@ -1,0 +1,27 @@
+{% if data != "hey" %}
+<table class="table">
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Name</th>
+			<th>Path</th>
+			<th>Tags</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for value in data %}
+			<tr>
+				<td>{{ data[value]['id'] }}</td>
+				<td>{{ data[value]['name'] }}</td>
+				<td>{{ data[value]['Path'] }}</td>
+				<td>
+				{% for var in data[value]['tags'] %}
+					{{var[0]}}
+				{% endfor %}
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% else %}
+<p>{{data}}</p>
+{% endif %}
