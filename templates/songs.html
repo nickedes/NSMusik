@@ -4,7 +4,6 @@
 		<tr>
 			<th>Id</th>
 			<th>Name</th>
-			<th>Path</th>
 			<th>Tags</th>
 		</tr>
 	</thead>
@@ -12,12 +11,16 @@
 		{% for value in data %}
 			<tr>
 				<td>{{ data[value]['id'] }}</td>
-				<td>{{ data[value]['name'] }}</td>
-				<td>{{ data[value]['Path'] }}</td>
+				<td>
+				<a href="file://{{ data[value]['Path'] }}">
+				{{ data[value]['name'] }}
+				</a>
+				</td>
 				<td>
 				{% for var in data[value]['tags'] %}
-					{{var[0]}}
+					{{var[0]}},
 				{% endfor %}
+				</td>
 			</tr>
 		{% endfor %}
 	</tbody>
@@ -25,3 +28,6 @@
 {% else %}
 <p>{{data}}</p>
 {% endif %}
+<form action="/submit">
+	<button>Add</button>
+</form>
